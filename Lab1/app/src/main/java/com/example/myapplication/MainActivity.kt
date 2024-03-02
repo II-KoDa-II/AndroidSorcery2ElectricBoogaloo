@@ -34,10 +34,10 @@ class MainActivity : AppCompatActivity() {
 
         weatherModel.WeatherData.observe(this, Observer<ApiWeather>{
                 value: ApiWeather ->
-            cityText.text = "Город  " + value.city?.name
-            weatherText.text = "Погода  " + value.list?.get(0)?.main?.temp?.minus(272.15)
+            cityText.text = "Город: " + value.city?.name
+            weatherText.text = "Погода: " + value.list?.get(0)?.main?.temp?.minus(272.15)
                 ?.toBigDecimal()?.setScale(2,RoundingMode.UP).toString()
-            descriptionText.text = "Описание  " + (value.list?.get(0)?.weather?.get(0)?.description)
+            descriptionText.text = "Описание: " + (value.list?.get(0)?.weather?.get(0)?.description)
             val icnURL = "https://openweathermap.org/img/w/" + (value.list?.get(0)?.weather?.get(0)?.icon) + ".png"
             Picasso.get().load(icnURL).into(weatherIcon)
         })
