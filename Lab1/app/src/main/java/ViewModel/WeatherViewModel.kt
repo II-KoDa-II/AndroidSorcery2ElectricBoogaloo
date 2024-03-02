@@ -1,7 +1,7 @@
 package ViewModel
 
 import Data.ApiWeather
-import Data.RetrofitCitysApi
+import Data.RetrofitCitiesApi
 import Data.RetrofitWeatherApi
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -16,27 +16,29 @@ import retrofit2.converter.gson.GsonConverterFactory
 class WeatherViewModel() : ViewModel() {
     var WeatherData : MutableLiveData<ApiWeather> = MutableLiveData()
 
-    fun parsingFunction(sinyName: String) {
+    fun parsingFunction(cityName: String) {
         var result: ApiWeather = ApiWeather(null, null, null, null, null)
         val retrofitWeather = Retrofit.Builder()
             .baseUrl("https://api.openweathermap.org/")
             .addConverterFactory(GsonConverterFactory.create()).build()
+        val productApi = retrofitWeather.create(RetrofitCitiesApi::class.java)
+//Выполнение запроса к API странице и конвертация в gson формат.
 
-        val productApi = retrofitWeather.create(RetrofitCitysApi::class.java)
-
-        val parsCorutin: Deferred<ApiWeather> = CoroutineScope(Dispatchers.Default).async {
-            val cities = productApi.getCities(sinyName, "38a3dea867ce86500b70b5f451427e14")
+        val parsCoroutine: Deferred<ApiWeather> = CoroutineScope(Dispatchers.Default).async {
+            val cities = productApi.getCities(cityName, "38a3dea867ce86500b70b5f451427e14")
             val weather = retrofitWeather.create(RetrofitWeatherApi::class.java)
             val weatherResult = weather.getWeather(cities[0].lat, cities[0].lon, "38a3dea867ce86500b70b5f451427e14")
 
             result = weatherResult
             return@async result
         }
+//Асинхронное получение данных о городе, погоде, и конкретной погоды координат города.
 
         runBlocking {
-            val SecondResult = parsCorutin.await()
+            val SecondResult = parsCoroutine.await()
             WeatherData.value = SecondResult
             return@runBlocking SecondResult
         }
+//Проверка на возникновение ошибок
     }
 }

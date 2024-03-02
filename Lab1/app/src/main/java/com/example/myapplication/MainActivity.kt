@@ -16,30 +16,32 @@ import java.math.RoundingMode
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_weather)
+        setContentView(R.layout.activity_main)
 
-        val WeatherModel = ViewModelProvider(this)[WeatherViewModel::class.java]
+        val weatherModel = ViewModelProvider(this)[WeatherViewModel::class.java]
+//Получение данных из View Model
 
         val inputText = findViewById<EditText>(R.id.editTextText)
         val button = findViewById<Button>(R.id.button)
         val cityText = findViewById<TextView>(R.id.textView3)
         val weatherText = findViewById<TextView>(R.id.textView4)
-        val descripText = findViewById<TextView>(R.id.textView5)
+        val descriptionText = findViewById<TextView>(R.id.textView5)
         val weatherIcon = findViewById<ImageView>(R.id.imageView)
 
         button.setOnClickListener{
-            WeatherModel.parsingFunction(inputText.text.toString())
+            weatherModel.parsingFunction(inputText.text.toString())
         }
 
-        WeatherModel.WeatherData.observe(this, Observer<ApiWeather>{
+        weatherModel.WeatherData.observe(this, Observer<ApiWeather>{
                 value: ApiWeather ->
             cityText.text = "Город  " + value.city?.name
             weatherText.text = "Погода  " + value.list?.get(0)?.main?.temp?.minus(272.15)
                 ?.toBigDecimal()?.setScale(2,RoundingMode.UP).toString()
-            descripText.text = "Описание  " + (value.list?.get(0)?.weather?.get(0)?.description)
+            descriptionText.text = "Описание  " + (value.list?.get(0)?.weather?.get(0)?.description)
             val icnURL = "https://openweathermap.org/img/w/" + (value.list?.get(0)?.weather?.get(0)?.icon) + ".png"
             Picasso.get().load(icnURL).into(weatherIcon)
         })
+//Вывод полученных API данных
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -47,11 +49,11 @@ class MainActivity : AppCompatActivity() {
         val cityText = findViewById<EditText>(R.id.editTextText)
         outState.putString("city", cityText.text.toString())
     }
-
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
         val сityText = findViewById<EditText>(R.id.editTextText)
         val сityName: String = savedInstanceState.getString("city").toString()
         сityText.setText(сityName)
     }
+//Обработка поворота экрана
 }

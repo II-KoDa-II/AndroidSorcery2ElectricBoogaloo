@@ -3,7 +3,7 @@ package Data
 import retrofit2.http.GET
 import retrofit2.http.Query
 
-data class SityData(
+data class CityData(
     val name: String,
     val localNames: Array<String>? = null,
     val lat: Double,
@@ -86,11 +86,11 @@ data class ApiWeather(
     val city: City? = null,
 )
 
-interface RetrofitCitysApi {
+interface RetrofitCitiesApi {
     @GET("/geo/1.0/direct?")
     suspend fun getCities(
         @Query("q") сity: String,
-        @Query("appid") appid: String): Array<SityData>
+        @Query("appid") appid: String): Array<CityData>
 }
 
 interface RetrofitWeatherApi {
